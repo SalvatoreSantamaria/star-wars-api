@@ -10,9 +10,7 @@ function useGetCharacterData() {
 
   async function paginated_fetch(url, page = 1, previousResponse = []) {
     return fetch(`${url}&page=${page}`)
-      .then(
-        (response) => response.json()
-        )
+      .then((response) => response.json())
       .then((newResponse) => {
         const response = [...previousResponse, ...newResponse.results]
 
@@ -25,23 +23,25 @@ function useGetCharacterData() {
   }
 
   useEffect(() => {
-    paginated_fetch(planetURL)
-    .then((r) => {
-      setPlanets([...r])
-    }, (e) => {
-      setError(e)
-    })
-    paginated_fetch(peopleURL)
-    .then((r) => {
-      setPeople([...r])
-    }, (e) => {
-      setError(e)
-    })
+    paginated_fetch(planetURL).then(
+      (r) => {
+        setPlanets([...r])
+      },
+      (e) => {
+        setError(e)
+      }
+    )
+    paginated_fetch(peopleURL).then(
+      (r) => {
+        setPeople([...r])
+      },
+      (e) => {
+        setError(e)
+      }
+    )
     setIsLoaded(true)
-
-    
   }, [])
-  
+
   const newPlanetMap = new Map()
   const peopleMap = new Map()
 
