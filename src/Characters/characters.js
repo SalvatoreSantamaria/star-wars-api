@@ -37,9 +37,9 @@ export default function Characters() {
     return <div>Error: {error.message}</div>
   }
 
-  if (!isLoaded || !charactersWithPlanets.length) {
-    return <div>Loading...</div>
-  }
+  // if (!isLoaded || !charactersWithPlanets.length) {
+  //   return <div>Loading...</div>
+  // }
 
   return (
     <div>

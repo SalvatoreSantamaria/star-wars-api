@@ -8,38 +8,49 @@ function useGetCharacterData() {
   let planetURL = "https://swapi.dev/api/planets/?page="
   let peopleURL = "https://swapi.dev/api/people/?page="
 
-  async function paginated_fetch(url, page = 1, previousResponse = []) {
-    return fetch(`${url}&page=${page}`)
+  async function paginated_fetch(url, options) {
+    let { page = 1, previousResponse = [], signal } = options
+    return fetch(`${url}&page=${page}`, {signal})
       .then((response) => response.json())
       .then((newResponse) => {
         const response = [...previousResponse, ...newResponse.results]
 
         if (newResponse.next) {
           page++
-          return paginated_fetch(url, page, response)
+          return paginated_fetch(url, {page, previousResponse: response, signal})
         }
         return response
       })
   }
 
   useEffect(() => {
-    paginated_fetch(planetURL).then(
+    const controller = new AbortController(); //this logic will prevent unneeded API calls
+    const signal = controller.signal;
+
+    paginated_fetch(planetURL, { signal }).then(
       (r) => {
         setPlanets([...r])
       },
-      (e) => {
-        setError(e)
-      }
+      // (e) => {
+      //   setError(e)
+      // }
     )
-    paginated_fetch(peopleURL).then(
+    paginated_fetch(peopleURL, { signal }).then(
       (r) => {
         setPeople([...r])
       },
-      (e) => {
-        setError(e)
-      }
+      // (e) => {
+      //   setError(e)
+      // }
     )
-    setIsLoaded(true)
+    //setIsLoaded(true)
+
+    
+    return function cleanup() {
+      controller.abort();
+      // paginated_fetch.abort(peopleURL)
+    }  
+
   }, [])
 
   const newPlanetMap = new Map()
